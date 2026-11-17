@@ -1,0 +1,80 @@
+<section id="contact" class="py-16 sm:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+        <!-- Left 6 Cols: Direct Contact -->
+        <div class="lg:col-span-6 flex flex-col justify-center gap-8 sm:gap-10">
+          <div>
+            <h2 class="font-display text-4xl sm:text-5xl font-bold leading-tight tracking-tight text-slate-900">
+              Let’s <span class="contact-outline-word">talk</span> for<br>
+              Something special
+            </h2>
+            <p class="mt-4 max-w-lg text-sm leading-relaxed text-slate-500 sm:text-base">
+              I build scalable backend and full-stack software. Reach out to discuss a role, a project, or an idea you’d like to bring to life.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <a href="mailto:lahiruindusara04@gmail.com" class="block w-fit text-lg font-semibold tracking-tight text-slate-900 transition-colors hover:text-blue-600 sm:text-xl">
+              lahiruindusara04@gmail.com
+            </a>
+            <a href="tel:+94787969637" class="block w-fit text-lg font-semibold tracking-tight text-slate-900 transition-colors hover:text-blue-600 sm:text-xl">
+              +94 78 796 9637
+            </a>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-slate-500">
+            <a href="https://github.com/Lahiru4" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 transition-colors hover:text-blue-600">
+              <i class="ph-fill ph-github-logo text-base" aria-hidden="true"></i> GitHub
+            </a>
+            <a href="https://www.linkedin.com/search/results/all/?keywords=Lahiru%20Indusara%20Edirisinha" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 transition-colors hover:text-blue-600">
+              <i class="ph-fill ph-linkedin-logo text-base" aria-hidden="true"></i> LinkedIn
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Right 6 Cols: Portfolio Assistant Chat -->
+        <div class="lg:col-span-6 no-print">
+          <section class="flex min-h-[520px] flex-col" aria-labelledby="assistant-title">
+            <header class="flex items-center gap-3 pb-5">
+              <div class="relative flex h-10 w-10 shrink-0 items-center justify-center text-blue-600">
+                <i class="ph ph-sparkle text-2xl" aria-hidden="true"></i>
+                <span class="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" aria-hidden="true"></span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 id="assistant-title" class="font-display text-xl font-bold text-slate-900">Portfolio Assistant</h3>
+                <p class="text-xs text-slate-500">Ask me about my work and experience</p>
+              </div>
+              <span class="text-xs font-medium text-emerald-700">Ready</span>
+            </header>
+
+            <div id="assistant-chat-messages" class="flex min-h-72 flex-1 flex-col gap-5 overflow-y-auto py-6" role="log" aria-live="polite" aria-relevant="additions">
+              <div class="flex max-w-[88%] items-end gap-2">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center text-blue-600" aria-hidden="true"><i class="ph ph-sparkle"></i></span>
+                <p class="text-sm leading-relaxed text-slate-600">
+                  Hi! I can help you find out about Indusara’s projects, experience, and skills. What would you like to know?
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-x-5 gap-y-2 py-3">
+              <button type="button" class="assistant-prompt border-b border-slate-200 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-blue-600 hover:text-blue-600" data-prompt="Tell me about your projects">Projects</button>
+              <button type="button" class="assistant-prompt border-b border-slate-200 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-blue-600 hover:text-blue-600" data-prompt="What experience do you have?">Experience</button>
+              <button type="button" class="assistant-prompt border-b border-slate-200 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-blue-600 hover:text-blue-600" data-prompt="How can I contact you?">Contact</button>
+            </div>
+
+            <form id="assistant-chat-form" class="flex items-center gap-3 border-b border-slate-300 py-3 focus-within:border-blue-600">
+              <label for="assistant-chat-input" class="sr-only">Message the portfolio assistant</label>
+              <input id="assistant-chat-input" type="text" autocomplete="off" required placeholder="Ask me anything..." class="min-w-0 flex-1 bg-transparent py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400">
+              <button type="submit" aria-label="Send message" class="flex h-10 w-10 shrink-0 items-center justify-center text-blue-600 transition-colors hover:text-blue-800">
+                <i class="ph-bold ph-paper-plane-tilt text-lg" aria-hidden="true"></i>
+              </button>
+            </form>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </section>
