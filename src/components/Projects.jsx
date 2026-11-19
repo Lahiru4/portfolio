@@ -44,7 +44,7 @@ function ProjectSlide({ project, index }) {
   return (
     <article
       className="group relative grid h-full grid-cols-1 content-center items-center gap-6 bg-bg md:grid-cols-12 md:gap-12 print:!transform-none print:!opacity-100"
-      style={{ transform: 'translateX(var(--card-x, 0px)) scale(var(--card-scale, 1))', opacity: 'var(--card-opacity, 1)' }}
+      style={{ transform: 'scale(var(--card-scale, 1))', opacity: 'var(--card-opacity, 1)' }}
     >
       {/* Details */}
       <div className="flex flex-col gap-4 md:col-span-5 md:gap-5">
@@ -92,23 +92,28 @@ function ProjectSlide({ project, index }) {
   );
 }
 
-// Scroll-driven slides: the project area pins below the header and, as you scroll,
-// each next project slides in from the right while the previous one drifts left and fades.
-const ENTER_START = 0.15; // Pause before a card starts sliding in (share of one card's scroll distance).
-const ENTER_LENGTH = 0.7; // Share of the scroll distance the slide itself takes.
-const easeOut = (value) => 1 - (1 - value) ** 3;
+// Scroll-driven track: the project area pins below the header with every project laid out
+// side by side (the next one peeks in on the right). As you scroll, the row slides left so
+// each project in turn moves to the front; the others stay visible, slightly smaller and dimmer.
+const HOLD = 0.3; // Share of each project's scroll distance where the row rests on it.
+const SIDE_SCALE = 0.95; // Size of the projects that are not in front.
+const SIDE_OPACITY = 0.6; // Opacity of the projects that are not in front.
+const easeInOut = (value) => (value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2);
 const clamp01 = (value) => Math.min(1, Math.max(0, value));
 
-function useSlideInCards(runwayRef, stageRef) {
+function useSlidingTrack(runwayRef, stageRef) {
   useEffect(() => {
     const runway = runwayRef.current;
     const stage = stageRef.current;
     if (!runway || !stage) return undefined;
 
-    const items = [...stage.querySelectorAll(':scope > ol > li')];
+    const track = stage.querySelector(':scope > ol');
+    const items = [...track.children];
+    const last = items.length - 1;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let pinTop = 0;
     let perCard = 1;
+    let step = 0;
     let frame = 0;
 
     const layout = () => {
@@ -118,38 +123,34 @@ function useSlideInCards(runwayRef, stageRef) {
       const centred = headerHeight + (window.innerHeight - headerHeight - stageHeight) / 2;
       pinTop = Math.round(Math.min(Math.max(headerHeight + 16, centred), window.innerHeight - stageHeight - 16));
       perCard = Math.round(window.innerHeight * 0.8);
+      // Distance between two neighbouring projects in the row (card width + gap).
+      step = last > 0 ? items[1].offsetLeft - items[0].offsetLeft : 0;
       stage.style.top = `${pinTop}px`;
-      // Scroll room: one screen-ish of scrolling per card after the first.
-      runway.style.height = `${stageHeight + (items.length - 1) * perCard}px`;
+      // Scroll room: one screen-ish of scrolling per project after the first.
+      runway.style.height = `${stageHeight + last * perCard}px`;
     };
 
     const progress = () => (pinTop - runway.getBoundingClientRect().top) / perCard;
 
+    // Which project is in front, as a fractional index: 2 = third project, 2.5 = halfway to the fourth.
+    // The row rests on each project for a moment, then eases over to the next.
+    const trackPosition = (current) => {
+      const clamped = Math.min(last, Math.max(0, current));
+      if (reduceMotion.matches) return Math.round(clamped); // Jump between projects instead of sliding.
+      const index = Math.floor(clamped);
+      return index + easeInOut(clamp01((clamped - index - HOLD / 2) / (1 - HOLD)));
+    };
+
     const update = () => {
       frame = 0;
-      const current = progress();
-      // 0 = waiting off-screen on the right, 1 = fully in place.
-      const arrived = items.map((_, index) =>
-        index === 0 ? 1 : easeOut(clamp01((current - (index - 1) - ENTER_START) / ENTER_LENGTH)),
-      );
+      const position = trackPosition(progress());
+      track.style.setProperty('--track-x', `${(-position * step).toFixed(1)}px`);
 
       items.forEach((item, index) => {
-        // How much the next project has replaced this one: 0 = in front, 1 = fully replaced.
-        const covered = Math.min(1, arrived[index + 1] ?? 0);
-        let x = 0;
-        let scale = 1;
-        let opacity = 1 - covered;
-        if (reduceMotion.matches) {
-          opacity *= arrived[index]; // Cross-fade instead of sliding.
-        } else {
-          x = (1 - arrived[index]) * window.innerWidth - covered * 0.2 * item.offsetWidth;
-          scale = 1 - covered * 0.06;
-        }
-        item.style.setProperty('--card-x', `${x.toFixed(1)}px`);
-        item.style.setProperty('--card-scale', scale.toFixed(4));
-        item.style.setProperty('--card-opacity', opacity.toFixed(3));
-        // Only the project in front catches clicks.
-        item.style.pointerEvents = arrived[index] < 0.5 || covered > 0.5 ? 'none' : '';
+        // 1 = this project is in front, 0 = it is one or more places away.
+        const focus = clamp01(1 - Math.abs(index - position));
+        item.style.setProperty('--card-scale', (SIDE_SCALE + (1 - SIDE_SCALE) * focus).toFixed(4));
+        item.style.setProperty('--card-opacity', (SIDE_OPACITY + (1 - SIDE_OPACITY) * focus).toFixed(3));
       });
     };
 
@@ -161,15 +162,13 @@ function useSlideInCards(runwayRef, stageRef) {
       requestUpdate();
     };
 
-    // Keyboard users: tabbing into a card scrolls to the point where that card is on top.
+    // Keyboard users: tabbing into a project scrolls to the point where that project is in front.
     const onFocusIn = (event) => {
       const index = items.findIndex((item) => item.contains(event.target));
       if (index < 0) return;
-      const current = progress();
-      const onTopFrom = index === 0 ? -Infinity : index - 1 + ENTER_START + ENTER_LENGTH;
-      if (current >= onTopFrom && current <= index + ENTER_START) return;
+      if (Math.abs(trackPosition(progress()) - index) < 0.01) return;
       const runwayTop = runway.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: runwayTop - pinTop + Math.max(0, index - 0.1) * perCard, behavior: 'instant' });
+      window.scrollTo({ top: runwayTop - pinTop + index * perCard, behavior: 'instant' });
     };
 
     relayout();
@@ -193,7 +192,7 @@ function useSlideInCards(runwayRef, stageRef) {
 export default function Projects() {
   const runwayRef = useRef(null);
   const stageRef = useRef(null);
-  useSlideInCards(runwayRef, stageRef);
+  useSlidingTrack(runwayRef, stageRef);
 
   return (
     <section id="projects" className="py-16 sm:py-24">
@@ -209,14 +208,17 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* The runway gives the scroll distance; the stage stays pinned while the cards slide in. */}
+      {/* The runway gives the scroll distance; the stage stays pinned while the row slides. */}
       <div ref={runwayRef} className="print:!h-auto">
-        {/* overflow-x-clip hides cards waiting off-screen without making the page scroll sideways. */}
+        {/* overflow-x-clip trims the row at the screen edges without making the page scroll sideways. */}
         <div ref={stageRef} className="sticky top-20 overflow-x-clip print:static">
-          {/* All cards share one grid cell, so they sit on top of each other at the same size. */}
-          <ol className={`${container} grid print:flex print:flex-col print:gap-6`}>
+          {/* Projects sit side by side; each is a bit narrower than the container so the next one peeks in. */}
+          <ol
+            className={`${container} flex gap-5 md:gap-8 print:!transform-none print:flex-col print:gap-6`}
+            style={{ transform: 'translateX(var(--track-x, 0px))' }}
+          >
             {projectsData.map((project, index) => (
-              <li key={project.id} className="col-start-1 row-start-1">
+              <li key={project.id} className="w-[85%] flex-none print:w-full">
                 <ProjectSlide project={project} index={index} />
               </li>
             ))}
