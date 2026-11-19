@@ -23,10 +23,11 @@ export function ToastProvider({ children }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 text-white text-xs font-medium shadow-lg border border-slate-700 transition-all duration-300"
+            className="pointer-events-auto flex items-center gap-2.5 rounded-full bg-invert px-4 py-3 text-xs font-medium text-invert-fg shadow-lg transition-opacity duration-300"
             style={{ opacity: toast.leaving ? 0 : 1 }}
+            role="status"
           >
-            <i className="ph-fill ph-check-circle text-emerald-400 text-base"></i>
+            <i className="ph-fill ph-check-circle text-base" aria-hidden="true"></i>
             <span>{toast.message}</span>
           </div>
         ))}

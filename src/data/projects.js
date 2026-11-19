@@ -1,11 +1,14 @@
-// Complete Project Data from User's Project Summaries & CV
+// Project case studies, written from each project's source code, docs and the CV.
+// `role` and `contribution` describe my part in each project.
 export const projectsData = [
     {
         id: 'medadvisor',
-        category: 'typescript',
         image: '/assets/medadvisor-project.jpeg',
         badge: 'Telemedicine Platform Backend',
         title: 'MedAdvisor | Telemedicine Backend',
+        role: 'Backend Developer',
+        year: '2025 – 2026',
+        contribution: 'Developed the backend that connects doctor discovery, bookings, payments, video consultations and digital prescriptions.',
         subtitle: 'TypeScript backend connecting doctor discovery, appointment booking, online payments, video consultations, and digital prescriptions.',
         shortSummary: 'Unifies the steps before, during, and after an online consultation into one backend. Supports both scheduled doctor slot consultations and capacity-based ticket counseling with live video and chat.',
         highlightTitle: 'Two-Stage Ticket Reservation with Row-Level Locking',
@@ -31,12 +34,14 @@ export const projectsData = [
     },
     {
         id: 'hr-payroll',
-        category: 'java',
         image: '/assets/hr-payroll-project.jpeg',
-        badge: 'Enterprise ERP & HR API',
-        title: 'HR & Payroll Management REST API',
-        subtitle: 'Java 21 & Spring Boot backend connecting employee administration, attendance, leave, payroll, recruitment, project planning, and reporting.',
-        shortSummary: 'Multi-tenant capable enterprise HR backend supporting company administrators, employees, granular permission roles, and super administrators with automated payroll calculation and PDF document generation.',
+        badge: 'Enterprise ERP & HR System',
+        title: 'HR & Payroll Management System',
+        role: 'Full-Stack Developer · Team Lead',
+        year: '2025 – 2026',
+        contribution: 'Led the development team and built across the whole stack: the Spring Boot REST API and the React + TypeScript web app for administrators and employees.',
+        subtitle: 'Full-stack HR platform: a Java 21 & Spring Boot API and a React + TypeScript web app covering employees, attendance, leave, payroll, recruitment, projects, and reporting.',
+        shortSummary: 'Multi-tenant capable enterprise HR system supporting company administrators, employees, granular permission roles, and super administrators with automated payroll calculation and PDF document generation.',
         highlightTitle: 'Cross-Module Payroll Engine & Dual-DataSource Architecture',
         engineeringHighlight: 'The payroll engine coordinates multiple domain modules—combining department schedules, company holidays, geo-fenced attendance logs, and approved leaves to compute exact working days, loss-of-pay deductions, and EPF contributions before generating monthly salaries. Uses separate MySQL data sources for primary and HR records, plus transactional compensation logic in recruitment that automatically cleans up uploaded CV files if database persistence fails.',
         features: [
@@ -45,7 +50,8 @@ export const projectsData = [
             'Attendance & Geo-Fencing: Clock-in/out tracking with optional branch radius validation, manual corrections, and scheduled cron jobs for automatic absence marking.',
             'Leave Management: Full-day, half-day, and short-leave policies with automated monthly/yearly balance renewals and carryover rules.',
             'Payroll & WebSocket Confirmations: Bulk/individual salary generation, employee salary confirmation/rejection workflows streamed over WebSocket/STOMP, and branded PDF payslips.',
-            'Recruitment, Projects & Dashboards: Job postings with duplicate-check CV uploads, team project/task state boards, and FCM push/SMS/Email notifications.'
+            'Recruitment, Projects & Dashboards: Job postings with duplicate-check CV uploads, team project/task state boards, and FCM push/SMS/Email notifications.',
+            'React Web App: Admin and employee portals with Leaflet branch maps for geo-fences, drag-and-drop task boards, an org-chart tree, Recharts dashboards, rich-text job posts, and PDF/Excel exports.'
         ],
         techGroups: [
             {label: 'Backend & Security', items: ['Java 21', 'Spring Boot', 'Spring MVC', 'Spring Security', 'JWT']},
@@ -53,16 +59,90 @@ export const projectsData = [
                 label: 'Persistence & Messaging',
                 items: ['Spring Data JPA', 'Dual MySQL DataSources', 'WebSocket / STOMP', 'Firebase Storage & FCM']
             },
-            {label: 'Documents & Testing', items: ['iText PDF', 'ZXing QR', 'OpenAPI / Swagger UI', 'Maven', 'JUnit 5']}
+            {label: 'Documents & Testing', items: ['iText PDF', 'ZXing QR', 'OpenAPI / Swagger UI', 'Maven', 'JUnit 5']},
+            {
+                label: 'Frontend',
+                items: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'Ant Design', 'Zustand', 'SockJS / STOMP', 'Leaflet', 'Recharts']
+            }
         ],
-        cardTags: ['Java 21', 'Spring Boot', 'Spring Security', 'MySQL', 'WebSockets', 'iText PDF', 'ZXing', 'JUnit 5']
+        cardTags: ['Java 21', 'Spring Boot', 'Spring Security', 'MySQL', 'WebSockets', 'React', 'TypeScript', 'Tailwind CSS']
+    },
+    {
+        id: 'foodie',
+        image: null,
+        // Shown in place of an image on the project card.
+        snippet: [
+            ['POST /user-orders', '201'],
+            ['sripay ▸ payment', 'PAID'],
+            ['event ▸ order desk', 'ORDER_CREATED'],
+            ['NEW → ACCEPTED → PREPARING → READY', '']
+        ],
+        badge: 'Food Ordering & Reservations Platform',
+        title: 'Foodie | Restaurant Ordering Backend',
+        role: 'Backend Developer',
+        year: '2026',
+        contribution: 'Built the backend: customer ordering and payments, venue and outlet management, the admin portal APIs, and the realtime order alerts.',
+        subtitle: 'NestJS & TypeScript backend on Firebase for food ordering, delivery, dine-in and table reservations across multi-outlet restaurant venues.',
+        shortSummary: 'Customers order pickup, delivery or dine-in, book tables, pay through SriPay and follow their order live. Venue owners and staff manage menus, offers and incoming orders, while platform admins run the marketplace from a live dashboard.',
+        highlightTitle: 'Exactly-Once Paid-Order Events & Realtime Order Desk',
+        engineeringHighlight: 'Every path that can mark an order as paid—the confirm call, an order read, the SriPay webhook, or a 5-minute scheduled sweep—goes through one resolver. Inside a single Firestore transaction it assigns the daily order number, moves the order to NEW, and writes an ORDER_CREATED event with a deterministic id, so a retried transaction never creates a second alert. A WebSocket gateway on Cloud Run watches those events per outlet and pushes them to paired Order Desk desktop apps, replaying the last 24 hours of unhandled orders when a device reconnects.',
+        features: [
+            'Four Order Types: Pickup, delivery with distance-based fees, dine-in, and table reservations, with a persistent cart, packages, coupons, and multi-outlet offers.',
+            'SriPay Payments & Sign-In: Checkout sessions, verified webhooks, automatic refunds when an outlet rejects an order, and sign-in from inside the SriPay Mini Program.',
+            'Live Order Tracking: Server-Sent Event streams keep customers, outlet staff, and the admin dashboard current without polling, and FCM pushes cover every status change.',
+            'Venue & Outlet Management: Menus, size-based item pricing, bar items, gallery photos, opening hours, and table availability search for each outlet.',
+            'Roles, 2FA & Device Pairing: Venue owners and members with per-outlet permissions, two-factor login, and one-time pairing codes for Order Desk devices.',
+            'Hardened API: Per-IP rate limits with stricter budgets on auth routes, security headers (HSTS, CSP, nosniff), Cloud Tasks notification queues, and Jest test coverage.'
+        ],
+        techGroups: [
+            {label: 'Backend Core', items: ['Node.js 22', 'TypeScript', 'NestJS 11', 'class-validator']},
+            {label: 'Data & Real-Time', items: ['Firebase Firestore', 'FireORM', 'Server-Sent Events', 'WebSockets']},
+            {
+                label: 'Cloud & Integrations',
+                items: ['Firebase Cloud Functions', 'Google Cloud Run', 'Google Cloud Tasks', 'SriPay Gateway', 'Firebase Cloud Messaging', 'Docker', 'Jest']
+            }
+        ],
+        cardTags: ['TypeScript', 'NestJS', 'Firestore', 'Cloud Functions', 'Cloud Run', 'SSE', 'WebSockets', 'SriPay']
+    },
+    {
+        id: 'gem-auction',
+        image: '/assets/gem-auction-project.jpeg',
+        badge: 'Real-Time Bidding & Marketplace',
+        title: 'Gem Auction REST API',
+        role: 'Backend Developer',
+        year: '2026',
+        contribution: 'Developed the full backend in Go—every API the buyer, seller and admin apps use, from bidding and livestreams to payments, shipping and analytics.',
+        subtitle: 'High-concurrency Go backend for a gemstone auction marketplace, with real-time WebSocket bidding, livestreamed auction events, payments, and international shipping.',
+        shortSummary: 'A low-latency gemstone marketplace where verified sellers list stones, buyers bid live while watching the auction stream, and administrators manage approvals, orders, settlements, and refunds.',
+        highlightTitle: 'Race-Free Real-Time Bidding Engine in Go',
+        engineeringHighlight: 'Each bid is written inside a PostgreSQL transaction that locks the auction row (SELECT ... FOR UPDATE through GORM), so bids placed at the same moment are ordered correctly and always checked against the current highest bid, the auction status, and its end time. Once committed, the new top bid is broadcast to everyone in the auction room over WebSockets. Auto-bid plans outbid on a buyer’s behalf up to their limit, and voided transactions recalculate the top bid and notify the room.',
+        features: [
+            'Multi-Role Marketplace Modules: Dedicated workflows and RBAC for bidders/buyers, gemstone sellers, and platform administrators, with seller approval and storefronts.',
+            'Real-Time WebSocket Bidding: Live bid placement, instant outbid notifications, auto-bid plans, bid-history charts, and synchronized auction countdowns.',
+            'Livestream Auction Events: A Go WebSocket hub relays the host’s audio and video to viewers with live viewer counts alongside the bidding room.',
+            'Payments, Settlements & Refunds: SriPay IPG checkout, Alipay+ and Mastercard gateway payments, settlement fees, and voids/refunds protected by an admin security passcode.',
+            'Orders, Shipping & Media: FedEx shipping integration, insurance in order totals, invoice emails, and gem images and lab certificates on Alibaba Cloud OSS.',
+            'Analytics & Operations: Product impression/click tracking rolled up every 5 minutes into CTR reports, PostgreSQL backup and restore, and CI with architecture and route tests.'
+        ],
+        techGroups: [
+            {label: 'Language & Framework', items: ['Go (Golang)', 'Gin Web Framework', 'Gorilla WebSocket']},
+            {label: 'Database', items: ['PostgreSQL', 'GORM']},
+            {
+                label: 'Integrations',
+                items: ['SriPay IPG', 'Alipay+', 'Mastercard Gateway', 'FedEx API', 'Alibaba Cloud OSS', 'Google OAuth']
+            },
+            {label: 'Delivery', items: ['GitHub Actions', 'Nginx', 'Alibaba Cloud']}
+        ],
+        cardTags: ['Go (Golang)', 'Gin', 'GORM', 'PostgreSQL', 'WebSockets', 'Livestream', 'RBAC']
     },
     {
         id: 'docadvisor-ai',
-        category: 'python',
         image: '/assets/docadvisor-ai-project.jpeg',
         badge: 'Multilingual Healthcare AI Agent',
         title: 'DocAdvisor AI Agent',
+        role: 'AI Agent & Backend Developer',
+        year: '2026',
+        contribution: 'Developed the AI agent and its FastAPI backend: the Gemini triage flow, voice pipeline, booking integration, and encrypted history.',
         subtitle: 'Multilingual voice and text assistant (English, Sinhala, Tamil) for symptom triage and real-time doctor appointment booking.',
         shortSummary: 'Helps patients describe symptoms by voice or text in their preferred language, answers focused follow-up questions, identifies appropriate medical specialties, and books appointments directly via the DocAdvisor API.',
         highlightTitle: 'Decoupled LLM Triage & AES-256-GCM Encrypted State',
@@ -83,32 +163,5 @@ export const projectsData = [
             }
         ],
         cardTags: ['Python', 'FastAPI', 'Google Gemini', 'WebSockets', 'AES-256-GCM', 'Firestore', 'NLP']
-    },
-    {
-        id: 'gem-auction',
-        category: 'go',
-        image: '/assets/gem-auction-project.jpeg',
-        badge: 'Real-Time Bidding & Marketplace',
-        title: 'Gem Auction REST API',
-        subtitle: 'High-concurrency backend auction marketplace built with Go, Gin, GORM, and PostgreSQL with real-time WebSocket bidding and livestream support.',
-        shortSummary: 'Engineered a low-latency gemstone auction platform enabling buyers, sellers, and administrators to participate in live bidding rooms, manage gemstone media/certifications, and process secure payments.',
-        highlightTitle: 'Concurrent Real-Time Bidding Engine in Go',
-        engineeringHighlight: 'Leverages Go goroutines and WebSockets to broadcast real-time bid updates across active auction rooms with minimal latency, while utilizing GORM and PostgreSQL transactions to guarantee bid ordering, reserve price validation, and role-based access control across buyers, verified sellers, and platform administrators.',
-        features: [
-            'Multi-Role Marketplace Modules: Dedicated workflows and RBAC for bidders/buyers, gemstone sellers, and platform administrators.',
-            'Real-Time WebSocket Bidding: Live bid placement, instant outbid notifications, and synchronized auction countdowns.',
-            'Livestream Auction Integration: Supports live video streaming sessions alongside real-time bidding rooms.',
-            'Payments & Media Storage: Integrated payment gateway workflows and cloud media storage for high-resolution gem imagery and laboratory certificates.'
-        ],
-        techGroups: [
-            {label: 'Language & Framework', items: ['Go (Golang)', 'Gin Web Framework']},
-            {label: 'Database & Real-Time', items: ['PostgreSQL', 'GORM', 'WebSockets']},
-            {
-                label: 'Security & Features',
-                items: ['JWT & RBAC', 'Payment Integration', 'Livestream Support', 'Media Storage']
-            }
-        ],
-        cardTags: ['Go (Golang)', 'Gin', 'GORM', 'PostgreSQL', 'WebSockets', 'Livestream', 'RBAC']
     }
 ];
-

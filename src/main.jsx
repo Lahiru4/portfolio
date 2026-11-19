@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import '@phosphor-icons/web/regular';
 import '@phosphor-icons/web/bold';
 import '@phosphor-icons/web/fill';
-import '@phosphor-icons/web/duotone';
 import './index.css';
 import { ToastProvider } from './context/ToastContext.jsx';
 import Home from './pages/Home.jsx';

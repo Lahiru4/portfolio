@@ -1,146 +1,90 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Poppins', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Tailwind v3 defaults the original markup relies on. */
+/* Theme tokens: light is the default, dark is applied via <html data-theme="dark">. */
+:root {
+  --bg: #f4f4f1;
+  --surface: #ffffff;
+  --fg: #121212;
+  --muted: #55554f;
+  --faint: #8b8b85;
+  --line: #d9d9d3;
+  --line-strong: #b5b5ae;
+  --invert: #121212;
+  --invert-fg: #f4f4f1;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #121212;
+  --surface: #1a1a1a;
+  --fg: #ededea;
+  --muted: #a6a6a0;
+  --faint: #6f6f6a;
+  --line: #2c2c2a;
+  --line-strong: #484845;
+  --invert: #f2f2ef;
+  --invert-fg: #121212;
+  color-scheme: dark;
+}
+
+/* Expose the tokens as Tailwind colors: bg-bg, text-fg, border-line, bg-invert ... */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-invert: var(--invert);
+  --color-invert-fg: var(--invert-fg);
+}
+
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--line);
   }
 
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role="button"]:not(:disabled),
+  summary {
     cursor: pointer;
   }
-}
 
-/* Strictly Light Theme Custom Styling */
-body {
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  background-color: #f8fafc;
-  color: #0f172a;
-  overflow-x: hidden;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
-}
-
-.contact-outline-word {
-  color: transparent;
-  -webkit-text-stroke: 1.5px #0f172a;
-  paint-order: stroke fill;
-}
-
-.name-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px #0f172a;
-  paint-order: stroke fill;
-}
-
-header nav a, #mobile-menu a {
-  font-family: 'Poppins', sans-serif;
-}
-
-button {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-}
-
-button[class*='font-'] {
-  font-weight: 600;
-}
-
-.site-navigation {
-  z-index: 1000;
-}
-
-/* Scroll-driven stacked project cards */
-#projects-grid {
-  position: relative;
-}
-
-#projects {
-  scroll-margin-top: 4rem;
-  isolation: isolate;
-}
-
-#projects-section-heading {
-  position: sticky;
-  top: 4rem;
-  z-index: 10;
-  background: #000;
-}
-
-.project-stack-card {
-  position: sticky;
-  top: clamp(15rem, 30vh, 18rem);
-  z-index: var(--stack-order);
-  transform: scale(var(--stack-scale, 1));
-  filter: blur(var(--stack-blur, 0px));
-  opacity: var(--stack-opacity, 1);
-  transform-origin: center top;
-  transition: transform 450ms cubic-bezier(0.2, 0.75, 0.25, 1), filter 450ms ease, opacity 450ms ease;
-  will-change: transform, filter, opacity;
-}
-
-.project-stack-card-last {
-  position: relative;
-  top: auto;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #projects-section-heading {
-    position: relative;
-    top: auto;
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    overflow-x: clip;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  .project-stack-card {
-    position: relative;
-    top: auto;
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-    will-change: auto;
+  ::selection {
+    background: var(--invert);
+    color: var(--invert-fg);
   }
-}
 
-/* Subtle Engineering Grid Background */
-.bg-grid-pattern {
-  background-size: 32px 32px;
-  background-image:
-          linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
-}
+  :focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 3px;
+  }
 
-/* Smooth Card Elevations */
-.card-surface {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
+  section[id] {
+    scroll-margin-top: 4.5rem;
+  }
 
-.card-surface:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.07), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
-  transform: translateY(-2px);
+  summary::-webkit-details-marker {
+    display: none;
+  }
 }
 
 /* Custom Scrollbar */
@@ -149,14 +93,22 @@ button[class*='font-'] {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--line-strong);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    transition: none !important;
+  }
 }
 
 /* Print friendly rules */
@@ -166,5 +118,6 @@ button[class*='font-'] {
   }
   body {
     background: #ffffff !important;
+    color: #000000 !important;
   }
 }

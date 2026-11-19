@@ -1,98 +1,98 @@
-import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { projectsData } from '../data/projects.js';
-import { useProjectStack } from './useProjectStack.js';
-
-const visualStyles = {
-  typescript: { icon: 'ph-heartbeat', accent: 'text-cyan-300', dot: 'bg-cyan-300', glow: 'bg-cyan-400/10' },
-  java: { icon: 'ph-users-three', accent: 'text-orange-300', dot: 'bg-orange-300', glow: 'bg-orange-400/10' },
-  python: { icon: 'ph-brain', accent: 'text-emerald-300', dot: 'bg-emerald-300', glow: 'bg-emerald-400/10' },
-  go: { icon: 'ph-gavel', accent: 'text-violet-300', dot: 'bg-violet-300', glow: 'bg-violet-400/10' },
-};
+import { container, SectionLabel, SlashList } from './ui.jsx';
 
 const pad = (value) => String(value).padStart(2, '0');
 
-function ProjectVisual({ project, projectNumber, orderClass }) {
-  const visual = visualStyles[project.category] || visualStyles.typescript;
-
+// Project image, or a small terminal-style panel for projects without one.
+export function ProjectVisual({ project, className = '' }) {
   if (project.image) {
-    return (
-      <div className={`project-scroll-visual ${orderClass} relative aspect-[4/3] min-h-72 overflow-hidden rounded-xl shadow-[0_14px_36px_rgba(125,150,190,0.12)] sm:min-h-80`}>
-        <img src={project.image} alt={`${project.title} project preview`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-      </div>
-    );
+    return <img src={project.image} alt={`${project.title} preview`} className={`h-full w-full object-cover ${className}`} loading="lazy" />;
   }
 
   return (
-    <div className={`project-scroll-visual ${orderClass} relative flex min-h-72 flex-col justify-between overflow-hidden border border-white/10 bg-slate-950 p-6 sm:min-h-80 sm:p-9`}>
-      <div className={`pointer-events-none absolute -right-12 -top-12 h-56 w-56 rounded-full ${visual.glow} blur-3xl`}></div>
-      <div className="relative flex items-center justify-between gap-4">
-        <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-300">
-          <span className={`h-1.5 w-1.5 rounded-full ${visual.dot}`}></span>
-          {project.badge}
-        </span>
-        <span className="font-mono text-xs text-slate-500">{projectNumber} / {pad(projectsData.length)}</span>
+    <div className={`flex h-full w-full flex-col justify-between gap-8 bg-invert p-6 text-invert-fg sm:p-8 ${className}`}>
+      <div className="flex items-center gap-1.5" aria-hidden="true">
+        <span className="h-2.5 w-2.5 rounded-full border border-current opacity-60"></span>
+        <span className="h-2.5 w-2.5 rounded-full border border-current opacity-60"></span>
+        <span className="h-2.5 w-2.5 rounded-full border border-current opacity-60"></span>
       </div>
-      <div className="relative my-8 flex flex-1 flex-col justify-center">
-        <div className={`mb-5 flex h-16 w-16 items-center justify-center border border-white/15 bg-white/[0.03] ${visual.accent}`}>
-          <i className={`ph-duotone ${visual.icon} text-4xl`} aria-hidden="true"></i>
-        </div>
-        <h4 className="font-display text-xl font-bold leading-snug text-white sm:text-2xl">{project.highlightTitle}</h4>
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-400">{project.engineeringHighlight}</p>
+      <div>
+        <p className="font-mono text-2xl font-bold tracking-tight sm:text-3xl">{project.title.split('|')[0].trim()}</p>
+        <p className="mt-1 text-sm italic opacity-70">{project.badge}</p>
       </div>
-      <div className="relative flex flex-wrap gap-2">
-        {project.cardTags.slice(0, 4).map((tag) => (
-          <span key={tag} className="border border-white/10 px-2.5 py-1 text-[11px] font-mono text-slate-300">{tag}</span>
-        ))}
-      </div>
+      {project.snippet && (
+        <ul className="space-y-2 font-mono text-[11px] sm:text-xs" aria-hidden="true">
+          {project.snippet.map(([command, result]) => (
+            <li key={command} className="flex flex-wrap justify-between gap-x-4 border-t border-current/20 pt-2">
+              <span>{command}</span>
+              {result && <span className="opacity-60">{result}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-// FEATURED PROJECTS SECTION
-export default function Projects() {
-  const cardRefs = useRef([]);
-  useProjectStack(cardRefs);
+function ProjectCard({ project, index }) {
+  const href = `/projects/${encodeURIComponent(project.id)}`;
 
   return (
-    <section id="projects" className="bg-black py-20 text-white sm:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <article className="group grid overflow-hidden rounded-3xl border border-line bg-surface transition-colors hover:border-line-strong md:grid-cols-2">
+      <Link to={href} tabIndex={-1} aria-hidden="true" className="relative block aspect-[4/3] overflow-hidden md:aspect-auto md:min-h-80">
+        <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.03]">
+          <ProjectVisual project={project} />
+        </div>
+      </Link>
 
-        {/* Header */}
-        <div id="projects-section-heading" className="mb-14 text-center sm:mb-16">
-          <span className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-blue-400">Production Systems & Engineering Projects</span>
-          <h2 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Featured Engineering Projects</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-400">
-            A selection of production systems, backend architecture, and engineering decisions.
-          </p>
+      <div className="flex flex-col gap-5 p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-xs text-muted">
+          <span>{pad(index + 1)} / {pad(projectsData.length)}</span>
+          <span>{project.year}</span>
         </div>
 
-        {/* Alternating Project Showcase Rows */}
-        <div id="projects-grid" className="flex flex-col gap-16 sm:gap-24">
-          {projectsData.map((project, index) => {
-            const even = index % 2 === 0;
-            const projectNumber = pad(index + 1);
-            const isLast = index === projectsData.length - 1;
-            return (
-              <article
-                key={project.id}
-                ref={(element) => { cardRefs.current[index] = element; }}
-                className={`project-stack-card${isLast ? ' project-stack-card-last' : ''} grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-10 lg:gap-16`}
-                style={{ '--stack-order': index + 1 }}
-              >
-                <ProjectVisual project={project} projectNumber={projectNumber} orderClass={even ? 'md:order-1' : 'md:order-2'} />
-                <div className={`project-scroll-copy ${even ? 'md:order-2' : 'md:order-1'} py-2`}>
-                  <p className="mb-4 font-display text-4xl font-bold leading-none text-white sm:text-5xl">{projectNumber}</p>
-                  <h3 className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl">{project.title}</h3>
-                  <p className="mt-4 text-sm leading-relaxed text-slate-400 sm:text-base">{project.shortSummary}</p>
-                  <Link to={`/projects/${encodeURIComponent(project.id)}`} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-blue-300">
-                    <span>View Case Details</span>
-                    <i className="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
+        <div>
+          <h3 className="font-mono text-xl font-bold leading-snug tracking-tight text-fg sm:text-2xl">
+            <Link to={href} className="hover:underline hover:decoration-1 hover:underline-offset-4">{project.title}</Link>
+          </h3>
+          <p className="mt-3 inline-flex rounded-full border border-line px-3 py-1 text-xs italic text-fg">{project.role}</p>
+        </div>
+
+        <p className="text-sm leading-relaxed text-muted">{project.shortSummary}</p>
+
+        <SlashList items={project.cardTags} className="text-muted" />
+
+        <Link to={href} className="mt-auto inline-flex items-center gap-2 self-start pt-2" aria-label={`Read more about ${project.title}`}>
+          <span className="inline-flex h-10 items-center rounded-full bg-invert px-5 text-xs font-medium italic text-invert-fg">Read more</span>
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-fg text-fg" aria-hidden="true">
+            <i className="ph-bold ph-arrow-right"></i>
+          </span>
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+// PROJECTS SECTION
+export default function Projects() {
+  return (
+    <section id="projects" className="py-16 sm:py-24">
+      <div className={container}>
+        <div className="mb-10 flex flex-col gap-4 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <SectionLabel>Projects</SectionLabel>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">
+              Production systems I’ve built and shipped: <em className="text-fg">backend architecture</em>, real-time features and the engineering decisions behind them.
+            </p>
+          </div>
+          <h2 className="font-mono text-5xl font-bold tracking-tighter text-fg sm:text-7xl">Projects</h2>
+        </div>
+
+        <div className="flex flex-col gap-6 sm:gap-8">
+          {projectsData.map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
+          ))}
         </div>
       </div>
     </section>

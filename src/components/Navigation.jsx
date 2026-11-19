@@ -1,21 +1,36 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { getTheme, setTheme } from '../utils/theme.js';
+import { container } from './ui.jsx';
 
-const desktopLinks = [
+const links = [
   { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Tech Stack' },
   { id: 'projects', label: 'Projects' },
   { id: 'experience', label: 'Experience' },
   { id: 'contact', label: 'Contact' },
 ];
 
-const mobileLinks = [
-  { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills & Tech Stack' },
-  { id: 'projects', label: 'Featured Projects' },
-  { id: 'experience', label: 'Experience & Education' },
-  { id: 'contact', label: 'Contact & References' },
-];
+function ThemeToggle() {
+  const [theme, setThemeState] = useState(getTheme);
+  const next = theme === 'dark' ? 'light' : 'dark';
+
+  const toggle = () => {
+    setTheme(next);
+    setThemeState(next);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={`Switch to ${next} theme`}
+      title={`Switch to ${next} theme`}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-fg transition-colors hover:border-fg"
+    >
+      <i className={`ph ${theme === 'dark' ? 'ph-sun' : 'ph-moon'} text-lg`} aria-hidden="true"></i>
+    </button>
+  );
+}
 
 // Sticky Navigation Bar
 export default function Navigation() {
@@ -26,60 +41,51 @@ export default function Navigation() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="site-navigation sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 no-print">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand Logo */}
-        <Link to="/" onClick={() => onHome && window.scrollTo({ top: 0 })} className="flex items-center gap-2.5 group focus:outline-hidden">
-          <div className="flex flex-col">
-            <span className="font-display font-bold text-slate-900 text-base leading-none tracking-tight">Lahiru Indusara</span>
-          </div>
+    <header className="sticky top-0 z-50 border-b border-line/70 bg-bg/85 backdrop-blur-md no-print">
+      <div className={`${container} flex h-16 items-center justify-between gap-6`}>
+        {/* Brand */}
+        <Link
+          to="/"
+          onClick={() => { closeMenu(); if (onHome) window.scrollTo({ top: 0 }); }}
+          className="text-sm font-medium leading-tight text-fg"
+        >
+          Lahiru<br />Indusara
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1">
-          {desktopLinks.map((link) => (
-            <a key={link.id} href={sectionHref(link.id)} className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+        {/* Desktop links */}
+        <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
+          {links.map((link) => (
+            <a key={link.id} href={sectionHref(link.id)} className="text-sm text-muted transition-colors hover:text-fg">
               {link.label}
             </a>
           ))}
         </nav>
 
-        {/* Action Buttons */}
-        <div className="hidden md:flex items-center gap-2.5">
-          <a href="https://github.com/Lahiru4" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono font-medium text-slate-700 bg-slate-100 hover:bg-slate-200/80 transition-colors">
-            <i className="ph-fill ph-github-logo text-base"></i>
-            <span>GitHub</span>
-          </a>
-        </div>
-
-        {/* Mobile Menu Trigger */}
-        <button
-          type="button"
-          aria-label="Toggle Menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-          className="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-hidden"
-        >
-          <i className={`ph ${menuOpen ? 'ph-x' : 'ph-list'} text-2xl`}></i>
-        </button>
-      </div>
-
-      {/* Mobile Navigation Drawer */}
-      <div id="mobile-menu" className={`${menuOpen ? '' : 'hidden '}md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-5 space-y-2`}>
-        {mobileLinks.map((link) => (
-          <a key={link.id} href={sectionHref(link.id)} onClick={closeMenu} className="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50">
-            {link.label}
-          </a>
-        ))}
-        <div className="pt-2 flex items-center gap-2">
-          <a href="https://github.com/Lahiru4" target="_blank" rel="noopener noreferrer" className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-mono font-semibold text-slate-700 bg-slate-100">
-            <i className="ph-fill ph-github-logo text-base"></i> GitHub (@Lahiru4)
-          </a>
-          <a href={sectionHref('contact')} onClick={closeMenu} className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-white bg-blue-600">
-            Contact Me
-          </a>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-fg md:hidden"
+          >
+            <i className={`ph ${menuOpen ? 'ph-x' : 'ph-list'} text-lg`} aria-hidden="true"></i>
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      <nav id="mobile-menu" aria-label="Mobile" className={`${menuOpen ? '' : 'hidden '}border-t border-line md:hidden`}>
+        <div className={`${container} flex flex-col py-3`}>
+          {links.map((link) => (
+            <a key={link.id} href={sectionHref(link.id)} onClick={closeMenu} className="py-3 font-mono text-sm text-fg">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </nav>
     </header>
   );
 }
