@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { workProjects } from '../data/projects.js';
-import { container, DecorCircle, SectionLabel, SlashList } from './ui.jsx';
+import { container, DecorCircle, OutlinePill, SectionLabel, siteName, SlashList } from './ui.jsx';
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -73,12 +73,19 @@ function ProjectSlide({ project, index }) {
 
         <SlashList items={project.cardTags} className="text-muted" />
 
-        <Link to={href} className="group/more inline-flex items-center gap-2 self-start pt-1" aria-label={`Read more about ${project.title}`}>
-          <span className="inline-flex h-10 items-center rounded-full bg-invert px-5 text-xs font-medium italic text-invert-fg transition-opacity group-hover/more:opacity-85">Read more</span>
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-fg text-fg transition-colors group-hover/more:bg-invert group-hover/more:text-invert-fg" aria-hidden="true">
-            <i className="ph-bold ph-arrow-right"></i>
-          </span>
-        </Link>
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <Link to={href} className="group/more inline-flex items-center gap-2" aria-label={`Read more about ${project.title}`}>
+            <span className="inline-flex h-10 items-center rounded-full bg-invert px-5 text-xs font-medium italic text-invert-fg transition-opacity group-hover/more:opacity-85">Read more</span>
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-fg text-fg transition-colors group-hover/more:bg-invert group-hover/more:text-invert-fg" aria-hidden="true">
+              <i className="ph-bold ph-arrow-right"></i>
+            </span>
+          </Link>
+          {project.liveUrl && (
+            <OutlinePill href={project.liveUrl} icon="ph ph-globe" external>
+              {siteName(project.liveUrl)}
+            </OutlinePill>
+          )}
+        </div>
       </div>
 
       {/* Visual (shown first on phones) */}

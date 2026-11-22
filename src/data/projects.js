@@ -1,6 +1,36 @@
 // Project case studies, written from each project's source code, docs and the CV.
 // `role` and `contribution` describe my part in each project.
+// `liveUrl` (optional) links to the project's public site.
 export const projectsData = [
+    {
+        id: 'docadvisor-ai',
+        image: '/assets/docadvisor-ai-project.jpeg',
+        badge: 'Multilingual Healthcare AI Agent',
+        title: 'DocAdvisor AI Agent',
+        role: 'AI Agent & Backend Developer',
+        year: '2026',
+        contribution: 'Developed the AI agent and its FastAPI backend: the Gemini triage flow, voice pipeline, booking integration, and encrypted history.',
+        subtitle: 'Multilingual voice and text assistant (English, Sinhala, Tamil) for symptom triage and real-time doctor appointment booking.',
+        shortSummary: 'Helps patients describe symptoms by voice or text in their preferred language, answers focused follow-up questions, identifies appropriate medical specialties, and books appointments directly via the DocAdvisor API.',
+        highlightTitle: 'Decoupled LLM Triage & AES-256-GCM Encrypted State',
+        engineeringHighlight: 'Separates probabilistic language understanding from deterministic booking state. Google Gemini interprets multilingual symptom descriptions, asks follow-up questions, and flags urgent-care red flags, while the FastAPI backend deterministically tracks selected doctors/slots, verifies patient JWTs, streams structured UI cards over WebSockets, and encrypts saved conversation histories using AES-256-GCM before storing in Firebase Firestore.',
+        features: [
+            'Multilingual Symptom Triage: Supports English, Sinhala, and Tamil via voice or text, asking context-aware follow-up questions and flagging emergency red flags.',
+            'Live Doctor & Slot Discovery: Queries the DocAdvisor REST API by specialty or doctor name and filters out inactive or already-booked time slots.',
+            'Confirmed Appointment Booking: Guides patients through explicit review and confirmation before submitting bookings and returning payment links.',
+            'Voice & Text Pipeline: Supports browser microphone input, speech transcription, spoken audio replies, and low-latency card rendering.',
+            'Encrypted Conversation History: Authenticated patients can view and delete past sessions stored with AES-256-GCM encryption in Firestore.'
+        ],
+        techGroups: [
+            {label: 'AI & Backend', items: ['Python', 'FastAPI', 'Pydantic', 'Google Gemini', 'spaCy NLP']},
+            {label: 'Real-Time & Security', items: ['WebSockets', 'JWT Verification', 'AES-256-GCM Encryption']},
+            {
+                label: 'Integrations & UI',
+                items: ['DocAdvisor REST API', 'Firebase Firestore', 'HTML5 / CSS3 / JavaScript']
+            }
+        ],
+        cardTags: ['Python', 'FastAPI', 'Google Gemini', 'WebSockets', 'AES-256-GCM', 'Firestore', 'NLP']
+    },
     {
         id: 'medadvisor',
         image: '/assets/medadvisor-project.jpeg',
@@ -65,6 +95,42 @@ export const projectsData = [
                 items: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'Ant Design', 'Zustand', 'SockJS / STOMP', 'Leaflet', 'Recharts']
             }
         ],
+        // App screens. The first one is shown large; the rest sit in a grid.
+        screens: {
+            note: 'Screens captured from the project’s React web app running against a mock API filled with sample data.',
+            items: [
+                {
+                    src: '/assets/hr-ui-dashboard.png',
+                    title: 'Admin · HR Analytics Dashboard',
+                    alt: 'HR analytics dashboard with employee, branch, department, payroll and project counts, a donut chart of today’s attendance, check-in and absence figures, and a calendar',
+                    caption: 'Headcount, branches, departments, monthly payroll and running projects, with today’s attendance breakdown and a calendar to look back at any day.'
+                },
+                {
+                    src: '/assets/hr-ui-payroll.png',
+                    title: 'Admin · Payroll Management',
+                    alt: 'Payroll Management screen with total payroll, employees, earnings and deductions cards, month and year filters, and a table of each employee’s basic pay, earnings, deductions, net pay and paid or pending status',
+                    caption: 'Monthly payroll in LKR: basic pay, earnings, deductions and net pay per employee, with paid and pending runs and salary confirmations.'
+                },
+                {
+                    src: '/assets/hr-ui-employees.png',
+                    title: 'Admin · Employees',
+                    alt: 'Employee list with profile, job role, branch, department, employment type, status and join date for each employee, plus search, filters, bulk upload and add buttons',
+                    caption: 'Employee records across branches and departments, with search, filters, bulk upload and PDF/Excel export.'
+                },
+                {
+                    src: '/assets/hr-ui-leave.png',
+                    title: 'Admin · Leave',
+                    alt: 'Leave requests table with employee, date, start and end time, total hours, leave type and status, and approve and reject buttons on each row',
+                    caption: 'Full-day, half-day and short-leave requests, approved or rejected from one list.'
+                },
+                {
+                    src: '/assets/hr-ui-tasks.png',
+                    title: 'Admin · Tasks',
+                    alt: 'Task board for one project with Backlog, Todo, In Progress and Reopened columns of task cards showing priority, dates and assignees',
+                    caption: 'Drag-and-drop task board per project, with priorities, due dates and assignees.'
+                }
+            ]
+        },
         cardTags: ['Java 21', 'Spring Boot', 'Spring Security', 'MySQL', 'WebSockets', 'React', 'TypeScript', 'Tailwind CSS']
     },
     {
@@ -81,6 +147,7 @@ export const projectsData = [
         title: 'Foodie | Restaurant Ordering Backend',
         role: 'Backend Developer',
         year: '2026',
+        liveUrl: 'https://foodie.lk/welcome',
         contribution: 'Built the backend: customer ordering and payments, venue and outlet management, the admin portal APIs, and the realtime order alerts.',
         subtitle: 'NestJS & TypeScript backend on Firebase for food ordering, delivery, dine-in and table reservations across multi-outlet restaurant venues.',
         shortSummary: 'Customers order pickup, delivery or dine-in, book tables, pay through SriPay and follow their order live. Venue owners and staff manage menus, offers and incoming orders, while platform admins run the marketplace from a live dashboard.',
@@ -111,6 +178,7 @@ export const projectsData = [
         title: 'Gem Auction REST API',
         role: 'Backend Developer',
         year: '2026',
+        liveUrl: 'https://gemauction.lk/',
         contribution: 'Developed the full backend in Go—every API the buyer, seller and admin apps use, from bidding and livestreams to payments, shipping and analytics.',
         subtitle: 'High-concurrency Go backend for a gemstone auction marketplace, with real-time WebSocket bidding, livestreamed auction events, payments, and international shipping.',
         shortSummary: 'A low-latency gemstone marketplace where verified sellers list stones, buyers bid live while watching the auction stream, and administrators manage approvals, orders, settlements, and refunds.',
@@ -134,35 +202,6 @@ export const projectsData = [
             {label: 'Delivery', items: ['GitHub Actions', 'Nginx', 'Alibaba Cloud']}
         ],
         cardTags: ['Go (Golang)', 'Gin', 'GORM', 'PostgreSQL', 'WebSockets', 'Livestream', 'RBAC']
-    },
-    {
-        id: 'docadvisor-ai',
-        image: '/assets/docadvisor-ai-project.jpeg',
-        badge: 'Multilingual Healthcare AI Agent',
-        title: 'DocAdvisor AI Agent',
-        role: 'AI Agent & Backend Developer',
-        year: '2026',
-        contribution: 'Developed the AI agent and its FastAPI backend: the Gemini triage flow, voice pipeline, booking integration, and encrypted history.',
-        subtitle: 'Multilingual voice and text assistant (English, Sinhala, Tamil) for symptom triage and real-time doctor appointment booking.',
-        shortSummary: 'Helps patients describe symptoms by voice or text in their preferred language, answers focused follow-up questions, identifies appropriate medical specialties, and books appointments directly via the DocAdvisor API.',
-        highlightTitle: 'Decoupled LLM Triage & AES-256-GCM Encrypted State',
-        engineeringHighlight: 'Separates probabilistic language understanding from deterministic booking state. Google Gemini interprets multilingual symptom descriptions, asks follow-up questions, and flags urgent-care red flags, while the FastAPI backend deterministically tracks selected doctors/slots, verifies patient JWTs, streams structured UI cards over WebSockets, and encrypts saved conversation histories using AES-256-GCM before storing in Firebase Firestore.',
-        features: [
-            'Multilingual Symptom Triage: Supports English, Sinhala, and Tamil via voice or text, asking context-aware follow-up questions and flagging emergency red flags.',
-            'Live Doctor & Slot Discovery: Queries the DocAdvisor REST API by specialty or doctor name and filters out inactive or already-booked time slots.',
-            'Confirmed Appointment Booking: Guides patients through explicit review and confirmation before submitting bookings and returning payment links.',
-            'Voice & Text Pipeline: Supports browser microphone input, speech transcription, spoken audio replies, and low-latency card rendering.',
-            'Encrypted Conversation History: Authenticated patients can view and delete past sessions stored with AES-256-GCM encryption in Firestore.'
-        ],
-        techGroups: [
-            {label: 'AI & Backend', items: ['Python', 'FastAPI', 'Pydantic', 'Google Gemini', 'spaCy NLP']},
-            {label: 'Real-Time & Security', items: ['WebSockets', 'JWT Verification', 'AES-256-GCM Encryption']},
-            {
-                label: 'Integrations & UI',
-                items: ['DocAdvisor REST API', 'Firebase Firestore', 'HTML5 / CSS3 / JavaScript']
-            }
-        ],
-        cardTags: ['Python', 'FastAPI', 'Google Gemini', 'WebSockets', 'AES-256-GCM', 'Firestore', 'NLP']
     },
     {
         id: 'cic-agri-banana',

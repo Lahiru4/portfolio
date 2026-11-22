@@ -36,13 +36,17 @@ export function SlashList({ items, className = '' }) {
 const pillBase = 'inline-flex h-11 items-center justify-center rounded-full px-6 text-sm font-medium italic transition-colors';
 const circleBase = 'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors';
 
+// "https://www.foodie.lk/welcome" -> "foodie.lk"
+export const siteName = (url) => new URL(url).hostname.replace(/^www\./, '');
+
 // Solid pill + round arrow button pair, as in "Projects (→)".
-export function PillArrowLink({ to, href, children, onClick }) {
+// `external` opens the link in a new tab and points the arrow up and out.
+export function PillArrowLink({ to, href, children, onClick, external = false }) {
   const content = (
     <>
       <span className={`${pillBase} min-w-36 bg-invert text-invert-fg group-hover:opacity-85`}>{children}</span>
       <span className={`${circleBase} border-fg text-fg group-hover:bg-invert group-hover:text-invert-fg`} aria-hidden="true">
-        <i className="ph-bold ph-arrow-right text-base"></i>
+        <i className={`ph-bold ${external ? 'ph-arrow-up-right' : 'ph-arrow-right'} text-base`}></i>
       </span>
     </>
   );
@@ -50,7 +54,7 @@ export function PillArrowLink({ to, href, children, onClick }) {
   return to ? (
     <Link to={to} className={className} onClick={onClick}>{content}</Link>
   ) : (
-    <a href={href} className={className} onClick={onClick}>{content}</a>
+    <a href={href} className={className} onClick={onClick} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{content}</a>
   );
 }
 

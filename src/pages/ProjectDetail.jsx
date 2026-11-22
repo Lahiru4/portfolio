@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Navigation from '../components/Navigation.jsx';
 import { ProjectVisual } from '../components/Projects.jsx';
-import { container, SlashList } from '../components/ui.jsx';
+import { container, PillArrowLink, siteName, SlashList } from '../components/ui.jsx';
 import { isAcademic, projectsData } from '../data/projects.js';
 
 const pad = (value) => String(value).padStart(2, '0');
@@ -180,6 +180,14 @@ function CaseStudy({ project, next }) {
             </div>
           )}
         </dl>
+
+        {project.liveUrl && (
+          <div className="mt-6">
+            <PillArrowLink href={project.liveUrl} external>
+              Visit {siteName(project.liveUrl)}
+            </PillArrowLink>
+          </div>
+        )}
       </header>
 
       <div className="mb-4 aspect-video overflow-hidden rounded-3xl border border-line">
