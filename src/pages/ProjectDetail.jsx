@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ArchitectureDiagram from '../components/ArchitectureDiagram.jsx';
 import Navigation from '../components/Navigation.jsx';
 import { ProjectVisual } from '../components/Projects.jsx';
 import { container, PillArrowLink, siteName, SlashList } from '../components/ui.jsx';
@@ -197,6 +198,12 @@ function CaseStudy({ project, next }) {
       <Section title="Overview">
         <p className="text-base leading-relaxed text-fg sm:text-lg">{project.shortSummary}</p>
       </Section>
+
+      {project.architecture && (
+        <Section title="Architecture">
+          <ArchitectureDiagram architecture={project.architecture} />
+        </Section>
+      )}
 
       {project.award && (
         <Section title="Recognition">

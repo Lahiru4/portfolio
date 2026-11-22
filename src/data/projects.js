@@ -29,6 +29,36 @@ export const projectsData = [
                 items: ['DocAdvisor REST API', 'Firebase Firestore', 'HTML5 / CSS3 / JavaScript']
             }
         ],
+        // System diagram (components/ArchitectureDiagram.jsx): client -> backend pipeline + stages -> outside services.
+        // A node with `emphasis` is drawn inverted; `usedBy` says which backend steps call a service.
+        architecture: {
+            note: 'Simplified from the FastAPI code: how one patient message travels from the browser to a booked appointment.',
+            client: {
+                icon: 'ph ph-microphone',
+                title: 'Patient web client',
+                detail: 'Speaks or types in English, Sinhala or Tamil, and sees doctor, slot and confirmation cards as the chat goes on.'
+            },
+            request: 'WebSocket /api/ws/voice + patient JWT',
+            response: 'speak · show_doctors · show_slots · confirm · booking_done · audio',
+            backend: {
+                title: 'FastAPI backend',
+                pipeline: [
+                    {icon: 'ph ph-shield-check', title: 'JWT check', detail: 'Verifies the patient token from the header, cookie or query.'},
+                    {icon: 'ph ph-waveform', title: 'Speech to text', detail: 'Audio messages only, through Gemini or Google Cloud Speech.'},
+                    {icon: 'ph ph-robot', title: 'Voice agent', detail: 'Holds the booking state and decides the next step.', emphasis: true},
+                    {icon: 'ph ph-speaker-high', title: 'Text to speech', detail: 'Gemini, Edge, ElevenLabs or gTTS, sent with the reply or just after it.'}
+                ],
+                stagesLabel: 'Voice agent stages',
+                stages: ['Greeting', 'Symptoms', 'Triage', 'Doctor', 'Slot', 'Confirm', 'Done'],
+                stagesNote: 'Triage asks up to 4 short follow-up questions. Red-flag symptoms get an urgent-care warning, and off-topic messages are steered back to the symptoms.'
+            },
+            servicesLink: 'HTTPS',
+            services: [
+                {icon: 'ph ph-sparkle', title: 'Google Gemini', detail: 'Reads the symptoms and returns triage JSON: ASK, DIAGNOSE, URGENT or OFFTOPIC.', usedBy: 'Triage · STT · TTS'},
+                {icon: 'ph ph-stethoscope', title: 'DocAdvisor API', detail: 'Doctor search, open slots, and the booking with its payment link.', usedBy: 'Doctor · Slot · Confirm'},
+                {icon: 'ph ph-lock-key', title: 'Firebase Firestore', detail: 'Chat history, encrypted with AES-256-GCM before it is saved.', usedBy: 'Every message'}
+            ]
+        },
         cardTags: ['Python', 'FastAPI', 'Google Gemini', 'WebSockets', 'AES-256-GCM', 'Firestore', 'NLP']
     },
     {
