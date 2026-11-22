@@ -201,6 +201,30 @@ export const projectsData = [
                 caption: 'Farm staff walking us through daily operations'
             }
         ],
+        // App screens. The first one is shown large; the rest sit in a grid.
+        screens: {
+            note: 'Screens recreated from the project’s original JavaFX FXML layouts and stylesheets, filled with sample data.',
+            items: [
+                {
+                    src: '/assets/cic-ui-dashboard.png',
+                    title: 'Manager · Dashboard',
+                    alt: 'Manager dashboard with cultivated area, stock and monthly harvest cards, a cost and profit pie chart, and a bar chart of plants, harvest and fertilizer per block',
+                    caption: 'Cultivated area, stock and monthly harvest at a glance, with plants, harvest and fertilizer compared across blocks.'
+                },
+                {
+                    src: '/assets/cic-ui-blocks.png',
+                    title: 'Manager · Manage Block',
+                    alt: 'Manage Block screen showing a block’s acres, humidity, plant quantity and pH, a planting form and a table of planting records',
+                    caption: 'Each land block’s acres, humidity, pH and plant count, with planting records by date and plant type.'
+                },
+                {
+                    src: '/assets/cic-ui-harvest.png',
+                    title: 'Crop Harvester · Manage Harvest',
+                    alt: 'Harvest entry form with block, date, full harvest, wastage and price per kilo, a harvest pie chart and a table of harvest records',
+                    caption: 'Harvest entry: full harvest and wastage per block; the app works out the sellable harvest.'
+                }
+            ]
+        },
         contribution: 'Took part in the field research at CIC and developed the JavaFX desktop application and its MySQL database with the team.',
         subtitle: 'JavaFX desktop system for a banana plantation, built after a field visit to CIC to manage land blocks, planting, fertilizer, harvests, stock, orders and profit.',
         shortSummary: 'Our team visited CIC’s farm, studied how its banana plantation runs, and built a desktop system for that real business scenario. Managers, crop harvesters and financial officers each get their own dashboard to record field work and track harvest, stock, costs and profit. It won 1st place at IJSE Innovesta ’23.',

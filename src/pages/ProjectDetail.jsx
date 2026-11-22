@@ -89,6 +89,44 @@ function Gallery({ photos }) {
   );
 }
 
+// One app screen in a simple window frame; opens full size in a new tab.
+function ScreenShot({ screen }) {
+  return (
+    <figure>
+      <a href={screen.src} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-2xl border border-line bg-surface" aria-label={`Open screen: ${screen.title}`}>
+        <div className="flex h-8 items-center gap-1.5 border-b border-line px-3" aria-hidden="true">
+          <span className="h-2 w-2 rounded-full border border-faint"></span>
+          <span className="h-2 w-2 rounded-full border border-faint"></span>
+          <span className="h-2 w-2 rounded-full border border-faint"></span>
+          <span className="ml-2 truncate font-mono text-[11px] text-muted">{screen.title}</span>
+        </div>
+        <img src={screen.src} alt={screen.alt} className="block aspect-video w-full object-cover object-left-top transition-opacity group-hover:opacity-90" loading="lazy" />
+      </a>
+      <figcaption className="mt-2 px-1 text-xs leading-relaxed text-muted">{screen.caption}</figcaption>
+    </figure>
+  );
+}
+
+// App screens: the first one large, the rest in a two-column grid.
+function Screens({ screens }) {
+  const [first, ...rest] = screens.items;
+  return (
+    <div>
+      <p className="mb-5 font-mono text-xs text-faint">{screens.note}</p>
+      <ScreenShot screen={first} />
+      {rest.length > 0 && (
+        <ul className="mt-6 grid gap-6 sm:grid-cols-2">
+          {rest.map((screen) => (
+            <li key={screen.src}>
+              <ScreenShot screen={screen} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function NotFound() {
   return (
     <div className="py-24">
@@ -162,6 +200,12 @@ function CaseStudy({ project, next }) {
         <Section title="Field research">
           {project.client && <ClientIntro client={project.client} />}
           {project.gallery && <Gallery photos={project.gallery} />}
+        </Section>
+      )}
+
+      {project.screens && (
+        <Section title="Interface">
+          <Screens screens={project.screens} />
         </Section>
       )}
 
