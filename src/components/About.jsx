@@ -55,12 +55,18 @@ export default function About() {
             </p>
           </div>
 
-          {/* Portrait */}
+          {/* Portrait: light-background photo in light mode, black-background photo in dark mode */}
           <div className="relative mx-auto w-full max-w-sm lg:col-span-5 lg:mr-0">
             <img
-              src="/assets/indusara-engineering-portrait.jpeg"
-              alt="Illustration of a software engineer working with code, systems, and data"
-              className="relative aspect-[4/5] w-full rounded-3xl border border-line bg-white object-cover object-top"
+              src="/assets/indusara-engineering-portrait.jpg"
+              alt="Portrait of Lahiru Indusara, Associate Software Engineer"
+              className="relative block aspect-[4/5] w-full rounded-3xl border border-line bg-surface object-cover object-top dark:hidden"
+              loading="lazy"
+            />
+            <img
+              src="/assets/indusara-engineering-portrait-black.jpg"
+              alt="Portrait of Lahiru Indusara, Associate Software Engineer"
+              className="relative hidden aspect-[4/5] w-full rounded-3xl border border-line bg-surface object-cover object-top dark:block"
               loading="lazy"
             />
           </div>

@@ -5,6 +5,9 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
+/* `dark:` follows the site's theme toggle (<html data-theme="dark">), not the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* Theme tokens: light is the default, dark is applied via <html data-theme="dark">. */
 :root {
   --bg: #f4f4f1;
