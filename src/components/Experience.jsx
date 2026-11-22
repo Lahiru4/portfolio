@@ -49,6 +49,13 @@ const education = [
     status: 'Completed',
     degree: 'Graduate Diploma in Software Engineering (GDSE)',
     summary: 'Comprehensive industry-oriented software engineering curriculum covering Java, enterprise frameworks, relational databases, and full-stack software development.',
+    recognition: {
+      image: '/assets/ijse-project-certificate.jpg',
+      alt: 'Lahiru receiving a project certificate on stage at the IJSE First Semester Project Presentation, GDSE 65 & 66',
+      title: 'Project Certificate',
+      event: 'First Semester Project Presentation · GDSE 65 & 66',
+      text: 'Awarded a certificate for a standout project at the IJSE first semester project presentation.',
+    },
   },
 ];
 
@@ -91,6 +98,31 @@ function Row({ when, sub, title, detail, defaultOpen = false, children }) {
         <div className="space-y-2 text-sm leading-relaxed text-muted md:col-span-9 md:col-start-3">{children}</div>
       </div>
     </details>
+  );
+}
+
+// Award photo + caption shown inside an education row. The photo is greyscale to match
+// the monochrome site and shows its colour on hover; clicking opens the full image.
+function Recognition({ image, alt, title, event, text }) {
+  return (
+    <figure className="mt-5 grid grid-cols-1 gap-4 rounded-3xl border border-line p-3 sm:grid-cols-[minmax(0,16rem)_1fr] sm:items-center">
+      <a href={image} target="_blank" rel="noopener noreferrer" className="group/photo block overflow-hidden rounded-2xl" aria-label="Open the full award photo">
+        <img
+          src={image}
+          alt={alt}
+          className="aspect-[3/2] w-full object-cover grayscale transition duration-500 group-hover/photo:scale-[1.03] group-hover/photo:grayscale-0"
+          loading="lazy"
+        />
+      </a>
+      <figcaption className="space-y-1.5 px-1 pb-1 sm:pb-0 sm:pr-3">
+        <p className="flex items-center gap-1.5 font-mono text-xs text-fg">
+          <i className="ph ph-medal" aria-hidden="true"></i> Recognition
+        </p>
+        <p className="text-base text-fg">{title}</p>
+        <p className="font-mono text-xs">{event}</p>
+        <p>{text}</p>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -144,8 +176,18 @@ export default function Experience() {
 
         <div className="border-t border-line">
           {education.map((item) => (
-            <Row key={item.school} when={item.status} title={item.school} detail={item.degree}>
+            <Row
+              key={item.school}
+              when={item.status}
+              sub={item.recognition && (
+                <span className="inline-flex items-center gap-1"><i className="ph ph-medal" aria-hidden="true"></i> Project award</span>
+              )}
+              title={item.school}
+              detail={item.degree}
+              defaultOpen={Boolean(item.recognition)}
+            >
               <p>{item.summary}</p>
+              {item.recognition && <Recognition {...item.recognition} />}
             </Row>
           ))}
         </div>
