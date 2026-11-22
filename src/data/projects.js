@@ -163,5 +163,69 @@ export const projectsData = [
             }
         ],
         cardTags: ['Python', 'FastAPI', 'Google Gemini', 'WebSockets', 'AES-256-GCM', 'Firestore', 'NLP']
+    },
+    {
+        id: 'cic-agri-banana',
+        // Campus projects are listed under Education, apart from the company projects carousel.
+        category: 'academic',
+        image: '/assets/cic-field-visit-packhouse.jpg',
+        badge: 'Agri-Business Management System',
+        title: 'CIC Agri Banana | Plantation Management System',
+        role: 'Team Project · Developer',
+        year: '2023',
+        // Shown as a pill on the project card and the case study header.
+        award: {
+            label: "1st Place · Innovesta '23",
+            title: 'Award for Innovative Software Solution',
+            event: "Innovesta '23 · Institute of Software Engineering (IJSE)",
+            text: 'Our team took 1st place at Innovesta ’23, the IJSE software project competition, and received the Award for Innovative Software Solution for this system.',
+            image: '/assets/cic-innovesta-award.jpg',
+            alt: "Glass Innovesta '23 trophy from IJSE reading Award for Innovative Software Solution, on a table at the awards ceremony"
+        },
+        // Real business the project was researched with, plus photos from the field visit.
+        client: {
+            name: 'CIC Holdings PLC',
+            url: 'https://www.cic.lk/',
+            text: 'CIC Holdings is a Sri Lankan conglomerate founded in 1964, working across crop solutions, agri produce, livestock, health care and industrial solutions. Its agri produce business grows bananas on 75 acres in Hingurakgoda and Pelwehera and supplies supermarkets such as Keells and Cargills. We visited CIC’s farm, walked through the plantation and pack house, and spoke with farm staff to understand how the business runs before designing the system.',
+            note: 'Academic team project built around CIC’s real business scenario; not a commissioned CIC product.'
+        },
+        gallery: [
+            {
+                src: '/assets/cic-field-visit-farm-tour.jpg',
+                alt: 'Students riding through the CIC farm on a tractor-drawn trailer, with coconut palms on both sides',
+                caption: 'Touring the farm on the estate’s tractor trailer'
+            },
+            {
+                src: '/assets/cic-field-visit-briefing.jpg',
+                alt: 'A CIC farm officer explaining operations to a group of students in white shirts',
+                caption: 'Farm staff walking us through daily operations'
+            }
+        ],
+        contribution: 'Took part in the field research at CIC and developed the JavaFX desktop application and its MySQL database with the team.',
+        subtitle: 'JavaFX desktop system for a banana plantation, built after a field visit to CIC to manage land blocks, planting, fertilizer, harvests, stock, orders and profit.',
+        shortSummary: 'Our team visited CIC’s farm, studied how its banana plantation runs, and built a desktop system for that real business scenario. Managers, crop harvesters and financial officers each get their own dashboard to record field work and track harvest, stock, costs and profit. It won 1st place at IJSE Innovesta ’23.',
+        highlightTitle: 'Block-Level Profit Analysis from Field to Sale',
+        engineeringHighlight: 'Every record in the system is tied to a land block, just as the farm manages its plantation. When a harvest is entered, the app subtracts wastage to get the sellable harvest and stores it with the price per kg. A multi-table MySQL query then joins blocks, harvests, stock and customer orders to work out each block’s profit: sold quantity × price per kg, minus plant, fertilizer, salary and additional costs. The result is plotted as a per-block profit chart, so the manager can see which part of the plantation earns the most.',
+        features: [
+            'Role-Based Dashboards: Sign-up and login for three account types (Manager, Crop Harvester and Financial Officer), each opening its own dashboard.',
+            'Land Block Management: Register plantation blocks with their area and field notes, and record which plants are planted in each block.',
+            'Fertilizer Tracking: Log fertilizer applied to each block with amount and cost, summarised by fertilizer type.',
+            'Harvest & Wastage: Record each block’s harvest, wastage and price per kg; the app calculates the sellable harvest and per-block totals.',
+            'Stock & Customer Orders: Keep daily stock records and take customer orders that draw stock down, with a full order history.',
+            'Charts & Profit Reports: Bar, line, pie and stacked bar charts for harvest by block, wastage, stock, expenses and per-block profit.'
+        ],
+        techGroups: [
+            {label: 'Desktop App', items: ['Java', 'JavaFX', 'FXML', 'JavaFX CSS']},
+            {label: 'UI Components', items: ['JFoenix (Material Design)', 'AnimateFX', 'JavaFX Charts']},
+            {label: 'Data', items: ['MySQL', 'JDBC (MySQL Connector/J)']},
+            {label: 'Research & Tools', items: ['On-site field visit', 'Requirements gathering', 'IntelliJ IDEA', 'Git']}
+        ],
+        cardTags: ['Java', 'JavaFX', 'JFoenix', 'MySQL', 'JDBC', 'Field Research']
     }
 ];
+
+export const isAcademic = (project) => project.category === 'academic';
+// Company projects, shown in the Projects carousel.
+export const workProjects = projectsData.filter((project) => !isAcademic(project));
+// Campus projects, shown under Education.
+export const academicProjects = projectsData.filter(isAcademic);

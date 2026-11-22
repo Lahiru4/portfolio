@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { projectsData } from '../data/projects.js';
+import { workProjects } from '../data/projects.js';
 import { container, DecorCircle, SectionLabel, SlashList } from './ui.jsx';
 
 const pad = (value) => String(value).padStart(2, '0');
@@ -51,7 +51,7 @@ function ProjectSlide({ project, index }) {
         <div className="flex items-end justify-between gap-4 border-b border-line pb-3">
           <p className="font-mono leading-none">
             <span className="text-5xl font-extrabold tracking-tighter text-transparent [-webkit-text-stroke:1.5px_var(--fg)] md:text-7xl">{pad(index + 1)}</span>
-            <span className="ml-2 text-xs text-muted">/ {pad(projectsData.length)}</span>
+            <span className="ml-2 text-xs text-muted">/ {pad(workProjects.length)}</span>
           </p>
           <span className="pb-1 font-mono text-xs text-muted">{project.year}</span>
         </div>
@@ -60,7 +60,14 @@ function ProjectSlide({ project, index }) {
           <Link to={href} className="hover:underline hover:decoration-1 hover:underline-offset-4">{project.title}</Link>
         </h3>
 
-        <p className="inline-flex self-start rounded-full bg-invert px-3 py-1 text-xs italic text-invert-fg">{project.role}</p>
+        <div className="flex flex-wrap gap-2">
+          <p className="inline-flex rounded-full bg-invert px-3 py-1 text-xs italic text-invert-fg">{project.role}</p>
+          {project.award && (
+            <p className="inline-flex items-center gap-1.5 rounded-full border border-fg px-3 py-1 text-xs text-fg">
+              <i className="ph-fill ph-trophy" aria-hidden="true"></i> {project.award.label}
+            </p>
+          )}
+        </div>
 
         <p className="line-clamp-4 text-sm leading-relaxed text-muted md:line-clamp-none">{project.shortSummary}</p>
 
@@ -217,7 +224,7 @@ export default function Projects() {
             className={`${container} flex gap-5 md:gap-8 print:!transform-none print:flex-col print:gap-6`}
             style={{ transform: 'translateX(var(--track-x, 0px))' }}
           >
-            {projectsData.map((project, index) => (
+            {workProjects.map((project, index) => (
               <li key={project.id} className="w-[85%] flex-none print:w-full">
                 <ProjectSlide project={project} index={index} />
               </li>

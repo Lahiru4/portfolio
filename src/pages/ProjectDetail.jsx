@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import Navigation from '../components/Navigation.jsx';
 import { ProjectVisual } from '../components/Projects.jsx';
 import { container, SlashList } from '../components/ui.jsx';
-import { projectsData } from '../data/projects.js';
+import { isAcademic, projectsData } from '../data/projects.js';
 
 const pad = (value) => String(value).padStart(2, '0');
 
@@ -27,6 +27,68 @@ function Section({ title, children }) {
 
 const backLink = 'inline-flex items-center gap-2 font-mono text-xs text-muted transition-colors hover:text-fg';
 
+// Inverted card with the award photo beside what it was for.
+function AwardCard({ award }) {
+  return (
+    <figure className="grid overflow-hidden rounded-3xl bg-invert text-invert-fg sm:grid-cols-[minmax(0,15rem)_1fr]">
+      <img src={award.image} alt={award.alt} className="aspect-[4/3] h-full w-full object-cover sm:aspect-auto" loading="lazy" />
+      <figcaption className="flex flex-col justify-center gap-3 p-6 sm:p-8">
+        <p className="inline-flex items-center gap-2 font-mono text-xs opacity-70">
+          <i className="ph-fill ph-trophy" aria-hidden="true"></i> {award.label}
+        </p>
+        <h3 className="font-mono text-xl font-bold leading-snug sm:text-2xl">{award.title}</h3>
+        <p className="font-mono text-xs opacity-70">{award.event}</p>
+        <p className="text-sm leading-relaxed opacity-80 sm:text-base">{award.text}</p>
+      </figcaption>
+    </figure>
+  );
+}
+
+// Who the project was researched with, with a link to their site.
+function ClientIntro({ client }) {
+  return (
+    <div className="mb-6 space-y-3">
+      <p className="leading-relaxed text-muted">
+        <a href={client.url} target="_blank" rel="noopener noreferrer" className="font-medium text-fg underline decoration-line underline-offset-4 hover:decoration-fg">
+          {client.name}
+          <i className="ph ph-arrow-up-right ml-0.5 align-[-1px] text-sm" aria-hidden="true"></i>
+        </a>{' '}
+        {client.text}
+      </p>
+      {client.note && <p className="font-mono text-xs text-faint">{client.note}</p>}
+    </div>
+  );
+}
+
+// Two-column photo grid; with an odd number of photos the first one spans the full width.
+// Each photo opens full size in a new tab.
+function Gallery({ photos }) {
+  return (
+    <ul className="grid gap-3 sm:grid-cols-2">
+      {photos.map((photo, index) => {
+        const wide = index === 0 && photos.length % 2 === 1;
+        return (
+          <li key={photo.src} className={wide ? 'sm:col-span-2' : ''}>
+            <figure>
+              <a href={photo.src} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-3xl border border-line" aria-label={`Open photo: ${photo.caption}`}>
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  className={`w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] ${wide ? 'aspect-[16/9]' : 'aspect-[3/2]'}`}
+                  loading="lazy"
+                />
+              </a>
+              <figcaption className="mt-2 px-1 font-mono text-xs text-muted">
+                {pad(index + 1)} · {photo.caption}
+              </figcaption>
+            </figure>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 function NotFound() {
   return (
     <div className="py-24">
@@ -39,12 +101,16 @@ function NotFound() {
 }
 
 function CaseStudy({ project, next }) {
+  // Campus projects live in their own block on the home page, so "back" goes there.
+  const academic = isAcademic(project);
+  const back = academic ? { to: '/#academic', label: 'Academic projects' } : { to: '/#projects', label: 'All projects' };
+
   return (
     <article>
       {/* Header */}
       <header className="pb-10 pt-10 sm:pb-14 sm:pt-14">
-        <Link to="/#projects" className={`${backLink} mb-10`}>
-          <i className="ph-bold ph-arrow-left" aria-hidden="true"></i> All projects
+        <Link to={back.to} className={`${backLink} mb-10`}>
+          <i className="ph-bold ph-arrow-left" aria-hidden="true"></i> {back.label}
         </Link>
         <p className="mb-4 font-mono text-xs text-muted">{project.badge}</p>
         <h1 className="max-w-4xl font-mono text-3xl font-bold leading-tight tracking-tighter text-fg sm:text-5xl lg:text-6xl">{project.title}</h1>
@@ -59,6 +125,22 @@ function CaseStudy({ project, next }) {
             <dt className="sr-only">Year</dt>
             <dd className="font-mono">{project.year}</dd>
           </div>
+          {academic && (
+            <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-fg">
+              <dt className="sr-only">Project type</dt>
+              <dd className="inline-flex items-center gap-1.5">
+                <i className="ph ph-graduation-cap" aria-hidden="true"></i> Academic project
+              </dd>
+            </div>
+          )}
+          {project.award && (
+            <div className="inline-flex items-center gap-2 rounded-full border border-fg px-4 py-2 text-fg">
+              <dt className="sr-only">Award</dt>
+              <dd className="inline-flex items-center gap-1.5">
+                <i className="ph-fill ph-trophy" aria-hidden="true"></i> {project.award.label}
+              </dd>
+            </div>
+          )}
         </dl>
       </header>
 
@@ -69,6 +151,19 @@ function CaseStudy({ project, next }) {
       <Section title="Overview">
         <p className="text-base leading-relaxed text-fg sm:text-lg">{project.shortSummary}</p>
       </Section>
+
+      {project.award && (
+        <Section title="Recognition">
+          <AwardCard award={project.award} />
+        </Section>
+      )}
+
+      {(project.client || project.gallery) && (
+        <Section title="Field research">
+          {project.client && <ClientIntro client={project.client} />}
+          {project.gallery && <Gallery photos={project.gallery} />}
+        </Section>
+      )}
 
       <Section title="My role">
         <p className="leading-relaxed text-muted">
@@ -111,8 +206,8 @@ function CaseStudy({ project, next }) {
 
       {/* Footer navigation */}
       <footer className="flex flex-col gap-6 border-t border-line py-10 sm:flex-row sm:items-center sm:justify-between">
-        <Link to="/#projects" className={backLink}>
-          <i className="ph-bold ph-arrow-left" aria-hidden="true"></i> All projects
+        <Link to={back.to} className={backLink}>
+          <i className="ph-bold ph-arrow-left" aria-hidden="true"></i> {back.label}
         </Link>
         {next && (
           <Link to={`/projects/${encodeURIComponent(next.id)}`} className="group text-left sm:text-right">
@@ -129,9 +224,11 @@ function CaseStudy({ project, next }) {
 
 export default function ProjectDetail() {
   const { id } = useParams();
-  const index = projectsData.findIndex((item) => item.id === id);
-  const project = projectsData[index];
-  const next = project && projectsData.length > 1 ? projectsData[(index + 1) % projectsData.length] : null;
+  const project = projectsData.find((item) => item.id === id);
+  // "Next project" stays within the same group: company projects or campus projects.
+  const group = project ? projectsData.filter((item) => isAcademic(item) === isAcademic(project)) : [];
+  const index = group.indexOf(project);
+  const next = group.length > 1 ? group[(index + 1) % group.length] : null;
 
   useEffect(() => {
     document.title = project ? `${project.title} | Case Study` : 'Project not found | Lahiru Indusara';
