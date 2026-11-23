@@ -21,19 +21,19 @@ export default function Hero() {
         <h1 className="sr-only">E.A.L Indusara Edirisinha, Associate Software Engineer</h1>
 
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-[1fr_auto] lg:gap-x-10 lg:gap-y-4">
-          <p aria-hidden="true" className={`${headline} order-1 lg:order-none lg:col-start-1 lg:row-start-1`}>Software</p>
+          <p aria-hidden="true" className={`${headline} order-1 lg:order-none lg:col-start-1 lg:row-start-1`}>Indusara</p>
 
           <div className="order-4 flex items-center lg:order-none lg:col-start-2 lg:row-start-1 lg:justify-end">
             <PillArrowLink href="#projects">Projects</PillArrowLink>
           </div>
 
           <p className="order-3 max-w-md text-base leading-relaxed text-muted lg:order-none lg:col-start-1 lg:row-start-2 lg:self-end lg:pb-3">
-            Hello, I’m <span className="font-medium text-fg">E.A.L Indusara Edirisinha</span>. My goal is to build{' '}
+            Hello, I’m <span className="font-medium text-fg"> __________ __________ </span>. My goal is to build{' '}
             <em className="text-fg">scalable, high-concurrency backends</em>, <em className="text-fg">real-time systems</em> and{' '}
             <em className="text-fg">AI-enabled platforms</em> that stay reliable in production.
           </p>
 
-          <p aria-hidden="true" className={`${headline} order-2 sm:text-right lg:order-none lg:col-start-2 lg:row-start-2`}>Engineer</p>
+          <p aria-hidden="true" className={`${headline} order-2 sm:text-right lg:order-none lg:col-start-2 lg:row-start-2`}>Edirisinha</p>
         </div>
 
         {/* Social links */}
