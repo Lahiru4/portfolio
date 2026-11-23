@@ -8,7 +8,7 @@ const pad = (value) => String(value).padStart(2, '0');
 // Project image, or a small terminal-style panel for projects without one.
 export function ProjectVisual({ project, className = '' }) {
   if (project.image) {
-    return <img src={project.image} alt={`${project.title} preview`} className={`h-full w-full object-cover ${className}`} loading="lazy" />;
+    return <img src={project.image} alt={`${project.title} preview`} className={`h-full w-full object-cover ${className}`} loading="lazy" decoding="async" />;
   }
 
   return (
@@ -42,10 +42,8 @@ function ProjectSlide({ project, index }) {
   const href = `/projects/${encodeURIComponent(project.id)}`;
 
   return (
-    <article
-      className="group relative grid h-full grid-cols-1 content-center items-center gap-6 bg-bg md:grid-cols-12 md:gap-12 print:!transform-none print:!opacity-100"
-      style={{ transform: 'scale(var(--card-scale, 1))', opacity: 'var(--card-opacity, 1)' }}
-    >
+    // Scale and opacity are set by useSlidingTrack; will-change keeps the card on its own GPU layer.
+    <article className="group relative grid h-full grid-cols-1 content-center items-center gap-6 bg-bg will-change-[transform,opacity] md:grid-cols-12 md:gap-12 print:!transform-none print:!opacity-100">
       {/* Details */}
       <div className="flex flex-col gap-4 md:col-span-5 md:gap-5">
         <div className="flex items-end justify-between gap-4 border-b border-line pb-3">
@@ -96,7 +94,7 @@ function ProjectSlide({ project, index }) {
             <ProjectVisual project={project} />
           </div>
           {project.image && (
-            <span className="absolute left-3 top-3 rounded-full border border-line bg-bg/85 px-3 py-1 text-[11px] italic text-fg backdrop-blur-sm sm:left-4 sm:top-4">
+            <span className="absolute left-3 top-3 rounded-full border border-line bg-bg/90 px-3 py-1 text-[11px] italic text-fg sm:left-4 sm:top-4">
               {project.badge}
             </span>
           )}
@@ -112,7 +110,12 @@ function ProjectSlide({ project, index }) {
 const HOLD = 0.3; // Share of each project's scroll distance where the row rests on it.
 const SIDE_SCALE = 0.95; // Size of the projects that are not in front.
 const SIDE_OPACITY = 0.6; // Opacity of the projects that are not in front.
-const easeInOut = (value) => (value < 0.5 ? 4 * value ** 3 : 1 - (-2 * value + 2) ** 3 / 2);
+// How quickly the row catches up with the scroll position, in seconds (smaller = snappier).
+// This smooths out mouse-wheel steps, which would otherwise make the row jump.
+const FOLLOW = 0.12;
+// Gentle ease-in-out (sine). A steeper curve (e.g. cubic) makes the middle of each slide so fast
+// that a single wheel step throws the row hundreds of pixels.
+const easeInOut = (value) => (1 - Math.cos(Math.PI * value)) / 2;
 const clamp01 = (value) => Math.min(1, Math.max(0, value));
 
 function useSlidingTrack(runwayRef, stageRef) {
@@ -123,14 +126,22 @@ function useSlidingTrack(runwayRef, stageRef) {
 
     const track = stage.querySelector(':scope > ol');
     const items = [...track.children];
+    const cards = items.map((item) => item.firstElementChild);
     const last = items.length - 1;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let pinTop = 0;
     let perCard = 1;
     let step = 0;
+    let viewWidth = 0;
+    let viewHeight = 0;
+    let shown = null; // Track position currently on screen (eases toward the scroll target).
+    let drawn = null; // Last position written to the DOM, to skip identical writes.
+    let lastTime = 0;
     let frame = 0;
 
     const layout = () => {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
       // Pin centred in the space below the header; on short screens pin so the whole card stays visible.
       const headerHeight = document.querySelector('header')?.offsetHeight ?? 64;
       const stageHeight = stage.offsetHeight;
@@ -155,25 +166,57 @@ function useSlidingTrack(runwayRef, stageRef) {
       return index + easeInOut(clamp01((clamped - index - HOLD / 2) / (1 - HOLD)));
     };
 
-    const update = () => {
-      frame = 0;
-      const position = trackPosition(progress());
-      track.style.setProperty('--track-x', `${(-position * step).toFixed(1)}px`);
-
-      items.forEach((item, index) => {
+    // Transform and opacity are set directly on the moving elements (not through inherited CSS
+    // variables), so the browser only has to move GPU layers instead of restyling every card.
+    const draw = (position) => {
+      track.style.transform = `translate3d(${(-position * step).toFixed(1)}px, 0, 0)`;
+      cards.forEach((card, index) => {
         // 1 = this project is in front, 0 = it is one or more places away.
         const focus = clamp01(1 - Math.abs(index - position));
-        item.style.setProperty('--card-scale', (SIDE_SCALE + (1 - SIDE_SCALE) * focus).toFixed(4));
-        item.style.setProperty('--card-opacity', (SIDE_OPACITY + (1 - SIDE_OPACITY) * focus).toFixed(3));
+        card.style.transform = `scale(${(SIDE_SCALE + (1 - SIDE_SCALE) * focus).toFixed(4)})`;
+        card.style.opacity = (SIDE_OPACITY + (1 - SIDE_OPACITY) * focus).toFixed(3);
       });
     };
 
+    // Each frame, move the shown position part of the way toward where the scroll says it should be,
+    // and keep animating until it arrives.
+    const tick = (time) => {
+      frame = 0;
+      const target = trackPosition(progress());
+      if (shown === null || reduceMotion.matches) {
+        shown = target;
+      } else {
+        const seconds = lastTime ? Math.min(time - lastTime, 64) / 1000 : 1 / 60;
+        shown += (target - shown) * (1 - Math.exp(-seconds / FOLLOW));
+        if (Math.abs(target - shown) < 0.0005) shown = target;
+      }
+
+      if (shown !== drawn) {
+        draw(shown);
+        drawn = shown;
+      }
+
+      if (shown === target) {
+        lastTime = 0;
+      } else {
+        lastTime = time;
+        frame = window.requestAnimationFrame(tick);
+      }
+    };
+
     const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(update);
+      if (!frame) frame = window.requestAnimationFrame(tick);
     };
     const relayout = () => {
       layout();
+      drawn = null; // Card spacing may have changed, so redraw even if the position did not.
       requestUpdate();
+    };
+    const onResize = () => {
+      // Phones fire resize while the address bar slides in and out. Re-measuring then would change
+      // the scroll room mid-scroll and make the row jump, so ignore small height-only changes.
+      if (window.innerWidth === viewWidth && Math.abs(window.innerHeight - viewHeight) < 150) return;
+      relayout();
     };
 
     // Keyboard users: tabbing into a project scrolls to the point where that project is in front.
@@ -188,13 +231,13 @@ function useSlidingTrack(runwayRef, stageRef) {
     relayout();
     document.fonts?.ready.then(relayout);
     window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', relayout);
+    window.addEventListener('resize', onResize);
     reduceMotion.addEventListener?.('change', requestUpdate);
     stage.addEventListener('focusin', onFocusIn);
 
     return () => {
       window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', relayout);
+      window.removeEventListener('resize', onResize);
       reduceMotion.removeEventListener?.('change', requestUpdate);
       stage.removeEventListener('focusin', onFocusIn);
       if (frame) window.cancelAnimationFrame(frame);
@@ -227,10 +270,8 @@ export default function Projects() {
         {/* overflow-x-clip trims the row at the screen edges without making the page scroll sideways. */}
         <div ref={stageRef} className="sticky top-20 overflow-x-clip print:static">
           {/* Projects sit side by side; each is a bit narrower than the container so the next one peeks in. */}
-          <ol
-            className={`${container} flex gap-5 md:gap-8 print:!transform-none print:flex-col print:gap-6`}
-            style={{ transform: 'translateX(var(--track-x, 0px))' }}
-          >
+          {/* useSlidingTrack sets the row's transform. */}
+          <ol className={`${container} flex gap-5 will-change-transform md:gap-8 print:!transform-none print:flex-col print:gap-6`}>
             {workProjects.map((project, index) => (
               <li key={project.id} className="w-[85%] flex-none print:w-full">
                 <ProjectSlide project={project} index={index} />
