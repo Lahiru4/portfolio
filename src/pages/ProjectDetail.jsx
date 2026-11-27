@@ -148,52 +148,62 @@ function CaseStudy({ project, next }) {
     <article>
       {/* Header */}
       <header className="pb-10 pt-10 sm:pb-14 sm:pt-14">
-        <Link to={back.to} className={`${backLink} mb-10`}>
-          <i className="ph-bold ph-arrow-left" aria-hidden="true"></i> {back.label}
-        </Link>
-        <p className="mb-4 font-mono text-xs text-muted">{project.badge}</p>
-        <h1 className="max-w-4xl font-mono text-3xl font-bold leading-tight tracking-tighter text-fg sm:text-5xl lg:text-6xl">{project.title}</h1>
-        <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted sm:text-lg">{project.subtitle}</p>
+        {/* Laptop/desktop: the main image sits top-right, level with the back link. The grid
+            reaches halfway into the empty margin right of the page column (never closer than 3rem
+            to the window's edge), so the image uses the space beside the text. The text block spans the whole row, so a long
+            heading can run over the image; a difference blend keeps it readable there (dark on
+            the light page, light on the dark page). `isolate bg-bg` gives the blend a solid
+            backdrop. Below lg the image drops under the text at full width. */}
+        <div className="isolate grid gap-8 bg-bg lg:mr-[min(0px,max(calc((50%-50vw)/2),calc(50%-50vw+3rem)))] lg:grid-cols-[minmax(0,1fr)_44%] lg:gap-x-10 lg:gap-y-0">
+          <div className="order-2 aspect-video overflow-hidden rounded-3xl border border-line lg:order-none lg:col-start-2 lg:row-start-1 lg:self-start">
+            <ProjectVisual project={project} />
+          </div>
 
-        <dl className="mt-8 flex flex-wrap gap-2 text-xs">
-          <div className="inline-flex items-center gap-2 rounded-full bg-invert px-4 py-2 text-invert-fg">
-            <dt className="sr-only">My role</dt>
-            <dd className="italic">{project.role}</dd>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-fg">
-            <dt className="sr-only">Year</dt>
-            <dd className="font-mono">{project.year}</dd>
-          </div>
-          {academic && (
-            <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-fg">
-              <dt className="sr-only">Project type</dt>
-              <dd className="inline-flex items-center gap-1.5">
-                <i className="ph ph-graduation-cap" aria-hidden="true"></i> Academic project
-              </dd>
-            </div>
-          )}
-          {project.award && (
-            <div className="inline-flex items-center gap-2 rounded-full border border-fg px-4 py-2 text-fg">
-              <dt className="sr-only">Award</dt>
-              <dd className="inline-flex items-center gap-1.5">
-                <i className="ph-fill ph-trophy" aria-hidden="true"></i> {project.award.label}
-              </dd>
-            </div>
-          )}
-        </dl>
+          <div className="lg:col-span-full lg:row-start-1">
+            <Link to={back.to} className={`${backLink} mb-10`}>
+              <i className="ph-bold ph-arrow-left" aria-hidden="true"></i> {back.label}
+            </Link>
+            <p className="mb-4 font-mono text-xs text-muted">{project.badge}</p>
+            <h1 className="relative max-w-4xl font-mono text-3xl font-bold leading-tight tracking-tighter text-fg sm:text-5xl lg:text-6xl lg:text-white lg:mix-blend-difference">{project.title}</h1>
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted sm:text-lg lg:max-w-[min(48rem,calc(56%-2.5rem))]">{project.subtitle}</p>
 
-        {project.liveUrl && (
-          <div className="mt-6">
-            <PillArrowLink href={project.liveUrl} external>
-              Visit {siteName(project.liveUrl)}
-            </PillArrowLink>
+            <dl className="mt-8 flex flex-wrap gap-2 text-xs lg:max-w-[calc(56%-2.5rem)]">
+              <div className="inline-flex items-center gap-2 rounded-full bg-invert px-4 py-2 text-invert-fg">
+                <dt className="sr-only">My role</dt>
+                <dd className="italic">{project.role}</dd>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-fg">
+                <dt className="sr-only">Year</dt>
+                <dd className="font-mono">{project.year}</dd>
+              </div>
+              {academic && (
+                <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-fg">
+                  <dt className="sr-only">Project type</dt>
+                  <dd className="inline-flex items-center gap-1.5">
+                    <i className="ph ph-graduation-cap" aria-hidden="true"></i> Academic project
+                  </dd>
+                </div>
+              )}
+              {project.award && (
+                <div className="inline-flex items-center gap-2 rounded-full border border-fg px-4 py-2 text-fg">
+                  <dt className="sr-only">Award</dt>
+                  <dd className="inline-flex items-center gap-1.5">
+                    <i className="ph-fill ph-trophy" aria-hidden="true"></i> {project.award.label}
+                  </dd>
+                </div>
+              )}
+            </dl>
+
+            {project.liveUrl && (
+              <div className="mt-6">
+                <PillArrowLink href={project.liveUrl} external>
+                  Visit {siteName(project.liveUrl)}
+                </PillArrowLink>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </header>
-
-      <div className="mb-4 aspect-video overflow-hidden rounded-3xl border border-line">
-        <ProjectVisual project={project} />
-      </div>
 
       <Section title="Overview">
         <p className="text-base leading-relaxed text-fg sm:text-lg">{project.shortSummary}</p>
